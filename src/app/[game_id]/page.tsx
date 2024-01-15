@@ -38,7 +38,7 @@ function GameExistsWrapper() {
   return <GameContent />;
 }
 
-export const GameContent = () => {
+const GameContent = () => {
   const { meta } = useContext(GameContext);
   const timeBeforeStart =
     meta!.startTime.toDate().getTime() - new Date().getTime();
