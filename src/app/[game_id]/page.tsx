@@ -92,7 +92,7 @@ const GameWaitingRoom = () => {
             </p>
             <div className="grow flex flex-wrap bg-surface rounded-xl items-start content-start justify-center gap-4">
               {Object.keys(users!).map((userKey) => (
-                <UserCard name={users![userKey].displayName} />
+                <UserCard name={users![userKey].displayName} key={userKey} />
               ))}
             </div>
           </div>

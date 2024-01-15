@@ -48,9 +48,9 @@ export const Login = () => {
           {success ? (
             <div className="flex flex-col space-y-4">
               <p className="text-2xl font-bold">Check your email!</p>
-              <p className="text-lg">We've sent you a link to join the game.</p>
+              <p className="text-lg">We&apos;ve sent you a link to join the game.</p>
               <p className="text-lg">
-                If you don't see it, check your spam folder.
+                If you don&apos;t see it, check your spam folder.
               </p>
             </div>
           ) : (
