@@ -10,7 +10,7 @@ export const Login = () => {
   const [success, setSuccess] = useState(false);
   const [email, setEmail] = useState("");
 
-  const onSubmit = (auth: Auth) => async (e: any) => {
+  const onSubmit = (auth: Auth) => async (e: React.FormEvent) => {
     e.preventDefault();
 
     const fullEmail = email + SUFFIX;
@@ -31,11 +31,11 @@ export const Login = () => {
       // if they open the link on the same device.
       console.log(`Email sent to ${fullEmail}`);
       setSuccess(true);
-    } catch (error: any) {
+    } catch (error) {
       // TODO handle error
-      const errorCode = error.code;
-      const errorMessage = error.message;
-      console.log(errorCode, errorMessage);
+      // const errorCode = error.code;
+      // const errorMessage = error.message;
+      console.error(error);
     }
   };
 

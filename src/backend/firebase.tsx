@@ -9,7 +9,7 @@ import {
   signInWithEmailLink,
 } from "firebase/auth";
 import { Firestore, getFirestore } from "firebase/firestore";
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useEffect, useState } from "react";
 
 export type Context = {
   app: FirebaseApp;
@@ -48,7 +48,7 @@ export const FirebaseAppProvider = (props: { children: React.ReactNode }) => {
     getLoggedInUser(context.auth)
       .then((currentUser) => setCurrentUser(currentUser))
       .catch(console.error);
-  }, []);
+  }, [context]);
 
   return (
     <FirebaseContext.Provider value={{...context, currentUser: currentUser }}>

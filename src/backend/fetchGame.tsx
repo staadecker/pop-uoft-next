@@ -7,6 +7,7 @@ import {
   doc,
   getDoc,
   onSnapshot,
+  setDoc,
 } from "firebase/firestore";
 import { FirebaseContext } from "./firebase";
 import { createContext, useContext, useState } from "react";
@@ -24,11 +25,13 @@ export type GameMetaData = {
 export type GameData = {
   users: GameUsers | null | undefined;
   meta: GameMetaData | null | undefined;
+  gameId: string;
 };
 
 export const GameContext = createContext<GameData>({
   users: undefined,
   meta: undefined,
+  gameId: "",
 });
 
 export const GameContextProvider = (props: {
@@ -57,11 +60,6 @@ export const GameContextProvider = (props: {
 
   const usersRef = collection(db, "games", props.gameId, "users");
 
-  // TODO remove this
-  // setTimeout(() => {
-  //   setUsersData((prev) => ({ ...prev, test: { displayName: "Beaver" } }));
-  // }, 2000);
-
   onSnapshot(
     usersRef,
     (querySnapshot: QuerySnapshot) => {
@@ -80,7 +78,7 @@ export const GameContextProvider = (props: {
   );
 
   return (
-    <GameContext.Provider value={{ users: usersData, meta: metaData }}>
+    <GameContext.Provider value={{ users: usersData, meta: metaData, gameId: props.gameId }}>
       {props.children}
     </GameContext.Provider>
   );
@@ -89,12 +87,14 @@ export const GameContextProvider = (props: {
 export const addUserToGame = async (
   db: Firestore,
   gameId: string,
+  userId: string,
   displayName: string
 ) => {
-  const userRef = collection(db, "games", gameId, "users");
+  const userRef = doc(db, "games", gameId, "users", userId);
   try {
-    await addDoc(userRef, { displayName });
+    await setDoc(userRef, { displayName });
+    console.log("User added to game + " + userId);
   } catch (error) {
-    console.error(error);
+    throw Error("Error adding user to game: " + error);
   }
 };
