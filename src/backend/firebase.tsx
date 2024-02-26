@@ -2,7 +2,6 @@ import { FirebaseApp, initializeApp } from "firebase/app";
 import { Auth, User, getAuth, signInAnonymously } from "firebase/auth";
 import { Firestore, getFirestore } from "firebase/firestore";
 import { createContext, useEffect, useState } from "react";
-import React from "react";
 
 export type Context = {
   app: FirebaseApp;
@@ -41,11 +40,14 @@ export const FirebaseAppProvider = (props: { children: React.ReactNode }) => {
   const context = getFirebaseContext();
 
   useEffect(() => {
-    signInAnonymously(context.auth).then((userCredential) => {
-      setCurrentUser(userCredential.user);
-    }).catch((error) => {
-      console.error(error);
-    });
+    signInAnonymously(context.auth)
+      .then((userCredential) => {
+        console.log("Signed in as: ", userCredential.user.uid);
+        setCurrentUser(userCredential.user);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
   }, []);
 
   return (

@@ -1,30 +1,27 @@
 "use client";
 
 import { FirebaseContext } from "../backend/firebase";
-import { GameContext, GameContextProvider } from "../backend/fetchGame";
-import GameInProgress from "../components/GameInProgress";
+import { GameContext, GameContextProvider } from "../backend/game";
+import { GameWrapper as GameInProgress } from "../components/GameInProgress";
 import { useContext, useEffect, useState } from "react";
-import GameWaitingRoom from "../components/WaitingRoom";
+import { GameWaitingRoom } from "../components/WaitingRoom";
 import { useLoaderData } from "react-router-dom";
-import React from "react";
 
 export default function GameContextWrapper() {
-  const {gameId} = useLoaderData() as {gameId: string};
+  const { gameId } = useLoaderData() as { gameId: string };
   return (
-    <GameContextProvider gameId={gameId}>
+    <GameContextProvider gameId={gameId} waitForLoad>
       <GameLoadingWrapper />
     </GameContextProvider>
   );
 }
 
 function GameLoadingWrapper() {
-  const { meta, users } = useContext(GameContext);
+  const { meta } = useContext(GameContext);
   const { currentUser } = useContext(FirebaseContext);
 
   if (meta === null) return <p>No such game found</p>;
-  if (meta === undefined || users === undefined) return <p>Loading game...</p>;
-
-  if (currentUser === undefined) return <p>Loading authentication...</p>;
+  if (currentUser === undefined) return <p>Creating user...</p>;
 
   return <GameWaitOrPlayWrapper />;
 }
@@ -34,7 +31,7 @@ const GameWaitOrPlayWrapper = () => {
   const { currentUser } = useContext(FirebaseContext);
 
   const [joined, setJoined] = useState(
-    () => users![currentUser!.uid] !== undefined
+    () => users[currentUser!.uid] !== undefined
   );
   const [gameStarted, setGameStarted] = useState(
     () => meta!.startTime.toDate().getTime() <= new Date().getTime()

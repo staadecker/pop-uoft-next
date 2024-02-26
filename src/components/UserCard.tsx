@@ -1,12 +1,12 @@
-import React from "react";
+import { GameUser } from "../backend/game";
 
-export const UserCard = (props: {name: string}) => (
+export const UserCard = ({ displayName, displayColor }: GameUser) => (
   <div className="p-2 bg-white rounded-lg shadow hover:shadow-md justify-start items-center gap-2 flex transition-height ease-in duration-500">
-    <div className="w-6 h-6 rounded-full justify-center items-center flex bg-black">
-      <img src={`/avatars/${props.name}.png`} />
+    <div className={`w-6 h-6 rounded-full justify-center items-center flex ${displayColor}`}>
+      <img src={`/avatars/${displayName}.png`} />
     </div>
     <div className="text-black text-xs cursor-default">
-      Anonymous {props.name}
+      Anonymous {displayName}
     </div>
   </div>
 );

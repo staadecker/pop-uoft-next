@@ -62,7 +62,7 @@ i.add-comment {
 }
 
 .CommentPlugin_CommentInputBox::before {
-  content: '';
+  content: "";
   position: absolute;
   width: 0;
   height: 0;
@@ -228,7 +228,7 @@ i.comments {
 }
 
 .CommentPlugin_CommentsPanel_Editor::before {
-  content: '';
+  content: "";
   width: 30px;
   height: 20px;
   float: right;
