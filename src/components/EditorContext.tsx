@@ -5,6 +5,10 @@ import { SharedHistoryContext } from "./lexical/context/SharedHistoryContext";
 import { TableContext } from "./lexical/plugins/TablePlugin";
 import { SharedAutocompleteContext } from "./lexical/context/SharedAutocompleteContext";
 import PlaygroundEditorTheme from "./lexical/themes/PlaygroundEditorTheme";
+import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
+import { useEffect } from "react";
+import { useGameDispatch } from "../logic/GameContext";
+import { GameDispatchActionType } from "../logic/game_logic";
 
 export function EditorContext({ children }): JSX.Element {
   const initialConfig = {
@@ -23,13 +27,27 @@ export function EditorContext({ children }): JSX.Element {
         <SharedHistoryContext>
           <TableContext>
             <SharedAutocompleteContext>
-              <div className="editor-shell-no">{children}</div>
+              {children}
             </SharedAutocompleteContext>
           </TableContext>
         </SharedHistoryContext>
       </LexicalComposer>
     </SettingsContext>
   );
+}
+
+export function RegisterEditor({ id, children }) {
+  const dispatch = useGameDispatch();
+  const [editor] = useLexicalComposerContext();
+
+  useEffect(() => {
+    dispatch({ type: GameDispatchActionType.ADD_EDITOR, payload: { id, editor } });
+    return () => {
+      dispatch({ type: GameDispatchActionType.REMOVE_EDITOR, payload: id });
+    };
+  }, [id, editor, dispatch]);
+
+  return children;
 }
 
 export function getEditorState(editor): string {

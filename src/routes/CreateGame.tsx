@@ -1,12 +1,12 @@
-import { useContext, useState } from "react";
+import { useState } from "react";
 import LoadingButton from "@mui/lab/LoadingButton";
-import { FirebaseContext } from "../backend/firebase";
 import { doc, setDoc } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 import Editor from "../components/lexical/Editor";
-import { EditorContext, getEditorState } from "../components/editor";
-import { InputAdornment, Slider, TextField } from "@material-ui/core";
+import { EditorContext, getEditorState } from "../components/EditorContext";
+import { InputAdornment, TextField } from "@material-ui/core";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
+import { useFirebase } from "../logic/FirebaseContext";
 
 const get_random_game_id = (length) => {
   let result = "";
@@ -32,7 +32,7 @@ const GameButton = ({ loading }) => {
 };
 
 const CreateGame = () => {
-  const { db } = useContext(FirebaseContext);
+  const { db } = useFirebase();
   const navigate = useNavigate();
   const [editor] = useLexicalComposerContext();
   const [submitting, setSubmitting] = useState(false);

@@ -1,25 +1,27 @@
 "use client";
 
-import { FirebaseContext } from "../backend/firebase";
-import { GameContext, GameContextProvider } from "../backend/game";
+import { GameContextProvider, useGame } from "../logic/GameContext";
 import { GameWrapper as GameInProgress } from "../components/GameInProgress";
-import { useContext, useEffect, useState } from "react";
+import { useState } from "react";
 import { GameWaitingRoom } from "../components/WaitingRoom";
 import { useLoaderData } from "react-router-dom";
+import { useFirebase } from "../logic/FirebaseContext";
+import { Status } from "../logic/game_logic";
 
 export default function GameContextWrapper() {
   const { gameId } = useLoaderData() as { gameId: string };
   return (
-    <GameContextProvider gameId={gameId} waitForLoad>
+    <GameContextProvider gameId={gameId}>
       <GameLoadingWrapper />
     </GameContextProvider>
   );
 }
 
 function GameLoadingWrapper() {
-  const { meta } = useContext(GameContext);
-  const { currentUser } = useContext(FirebaseContext);
+  const { meta } = useGame();
+  const { currentUser } = useFirebase();
 
+  if (meta === undefined) return <p>Loading...</p>;
   if (meta === null) return <p>No such game found</p>;
   if (currentUser === undefined) return <p>Creating user...</p>;
 
@@ -27,29 +29,30 @@ function GameLoadingWrapper() {
 }
 
 const GameWaitOrPlayWrapper = () => {
-  const { meta, users } = useContext(GameContext);
-  const { currentUser } = useContext(FirebaseContext);
+  const { users, status } = useGame();
+  const { currentUser } = useFirebase();
 
   const [joined, setJoined] = useState(
     () => users[currentUser!.uid] !== undefined
   );
-  const [gameStarted, setGameStarted] = useState(
-    () => meta!.startTime.toDate().getTime() <= new Date().getTime()
-  );
 
-  useEffect(() => {
-    if (!gameStarted) {
-      const timer = setTimeout(
-        () => setGameStarted((_) => true),
-        meta!.startTime.toDate().getTime() - new Date().getTime()
+  switch (status) {
+    case Status.WAITING:
+      return (
+        <GameWaitingRoom
+          joined={joined}
+          joinGameCallback={() => setJoined(true)}
+        />
       );
-      return () => clearTimeout(timer);
-    }
-  }, [meta]);
-
-  return gameStarted && joined ? (
-    <GameInProgress />
-  ) : (
-    <GameWaitingRoom joinGameCallback={() => setJoined(true)} joined={joined} />
-  );
+    case Status.IN_PROGRESS:
+      if (joined) {
+        return <GameInProgress />;
+      } else {
+        return <p>Game already started</p>;
+      }
+    case Status.FINISHED:
+      return <p>Game finished</p>;
+    default:
+      throw new Error("Don't know how to handle status: " + status);
+  }
 };

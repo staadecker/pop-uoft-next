@@ -21,7 +21,6 @@ import { ListPlugin } from "@lexical/react/LexicalListPlugin";
 import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
 import { TabIndentationPlugin } from "@lexical/react/LexicalTabIndentationPlugin";
 import { TablePlugin } from "@lexical/react/LexicalTablePlugin";
-import useLexicalEditable from "@lexical/react/useLexicalEditable";
 import { useEffect, useState } from "react";
 
 import { useSettings } from "./context/SettingsContext";
@@ -43,7 +42,6 @@ import ExcalidrawPlugin from "./plugins/ExcalidrawPlugin";
 import FloatingLinkEditorPlugin from "./plugins/FloatingLinkEditorPlugin";
 import FloatingTextFormatToolbarPlugin from "./plugins/FloatingTextFormatToolbarPlugin";
 import ImagesPlugin from "./plugins/ImagesPlugin";
-import InlineImagePlugin from "./plugins/InlineImagePlugin";
 import KeywordsPlugin from "./plugins/KeywordsPlugin";
 import { LayoutPlugin } from "./plugins/LayoutPlugin/LayoutPlugin";
 import LinkPlugin from "./plugins/LinkPlugin";
@@ -60,16 +58,12 @@ import ToolbarPlugin from "./plugins/ToolbarPlugin";
 import TreeViewPlugin from "./plugins/TreeViewPlugin";
 import ContentEditable from "./ui/ContentEditable";
 import Placeholder from "./ui/Placeholder";
+import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 
-const skipCollaborationInit =
-  // @ts-expect-error
-  window.parent != null && window.parent.frames.right === window;
-
-export default function Editor({editable}): JSX.Element {
+export default function Editor({ editable: isEditable }): JSX.Element {
   const { historyState } = useSharedHistoryContext();
   const {
     settings: {
-      isCollab,
       isAutocomplete,
       isMaxLength,
       isCharLimit,
@@ -82,9 +76,14 @@ export default function Editor({editable}): JSX.Element {
       tableCellBackgroundColor,
     },
   } = useSettings();
-  const isEditable = useLexicalEditable();
-  const text = "Enter some text...";
-  const placeholder = <Placeholder>{text}</Placeholder>;
+
+  const [editor] = useLexicalComposerContext();
+  useEffect(() => {
+    editor.setEditable(isEditable);
+  }, [isEditable, editor]);
+  const placeholder = (
+    <Placeholder>{isEditable ? "Enter some text..." : ""}</Placeholder>
+  );
   const [floatingAnchorElem, setFloatingAnchorElem] =
     useState<HTMLDivElement | null>(null);
   const [isSmallWidthViewport, setIsSmallWidthViewport] =
@@ -117,7 +116,9 @@ export default function Editor({editable}): JSX.Element {
 
   return (
     <div className="editor-shell">
-      {isRichText && isEditable && <ToolbarPlugin setIsLinkEditMode={setIsLinkEditMode} />}
+      {isRichText && isEditable && (
+        <ToolbarPlugin setIsLinkEditMode={setIsLinkEditMode} />
+      )}
       <div
         className={`editor-container ${showTreeView ? "tree-view" : ""} ${
           !isRichText ? "plain-text" : ""
@@ -136,14 +137,10 @@ export default function Editor({editable}): JSX.Element {
         <KeywordsPlugin />
         <SpeechToTextPlugin />
         <AutoLinkPlugin />
-        <CommentPlugin
-          providerFactory={undefined}
-        />
-        {(
+        <CommentPlugin providerFactory={undefined} />
+        {
           <>
-            {(
-              <HistoryPlugin externalHistoryState={historyState} />
-            )}
+            {<HistoryPlugin externalHistoryState={historyState} />}
             <RichTextPlugin
               contentEditable={
                 <div className="editor-scroller">
@@ -199,7 +196,7 @@ export default function Editor({editable}): JSX.Element {
               </>
             )}
           </>
-        ) }
+        }
         {(isCharLimit || isCharLimitUtf8) && (
           <CharacterLimitPlugin
             charset={isCharLimit ? "UTF-16" : "UTF-8"}

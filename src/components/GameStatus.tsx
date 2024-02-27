@@ -1,68 +1,43 @@
-import { useCallback, useContext, useEffect, useState } from "react";
-import { GameContext } from "../backend/game";
+import { useEffect, useState } from "react";
+import { useGame } from "../logic/GameContext";
+import { Status, getNextEventTime } from "../logic/game_logic";
+import WaitGameLoad from "./WaitGameLoad";
 
-type Status = {
-  timeRemaining?: string;
-  gameStarted: boolean;
-  popNumber?: number;
-  gameEnded: boolean;
-};
+function GameStatusUnwrapper() {
+  const { meta, status } = useGame();
 
-export function GameStatus() {
-  const { meta } = useContext(GameContext);
-  const { numberOfPops, popInterval } = meta!;
-
-  const getStatus = () => {
-    const currentTime = new Date().getTime();
-    let popNumber = 0;
-    let gameStarted = false;
-    let gameEnded = false;
-    let timeRemaining = undefined;
-    let nextEventTime = meta!.startTime.toDate().getTime();
-    if (currentTime >= nextEventTime) {
-      gameStarted = true;
-      for (; popNumber < numberOfPops; popNumber++) {
-        nextEventTime += popInterval * 60 * 1000;
-        if (currentTime < nextEventTime) {
-          break;
-        }
-      }
-      if (popNumber === numberOfPops) {
-        gameEnded = true;
-      }
-    }
-    if (!gameEnded) {
-        const timeDiff = nextEventTime - currentTime;
-        const minutes = Math.floor(timeDiff / 60000);
-        const seconds = ((timeDiff % 60000) / 1000).toFixed(0).padStart(2, "0");
-        timeRemaining = `${minutes}:${seconds}`;
-    }
-    return { timeRemaining, gameStarted, popNumber, gameEnded };
-  };
-
-  const [status, setStatus] = useState<Status>(getStatus());
+  const [timeInfo, setTimeInfo] = useState(getNextEventTime(meta));
 
   useEffect(() => {
     const timer = setInterval(() => {
-      setStatus(getStatus());
+      setTimeInfo(getNextEventTime(meta));
     }, 500);
 
     return () => clearInterval(timer);
   });
 
+  switch (status) {
+    case Status.UNKNOWN:
+      return <p>Loading...</p>;
+    case Status.WAITING:
+      return <p>Game starts in <strong>{timeInfo.timeRemaining}</strong></p>
+    case Status.IN_PROGRESS:
+      return <p>Swap in <strong>{timeInfo.timeRemaining}</strong></p>
+    case Status.FINISHED:
+      return <p>Game ended</p>
+    default:
+      throw new Error("Don't know how to handle status: " + status);
+  }
+}
+
+const GameStatus = () => {
   return (
-    <div className="text-center text-3xl">
-      {status.gameEnded ? (
-        <>Game ended</>
-      ) : status.gameStarted ? (
-        <>
-          Swap in <strong>{status.timeRemaining}</strong>
-        </>
-      ) : (
-        <p>
-          Game starts in <strong>{status.timeRemaining}</strong>
-        </p>
-      )}
-    </div>
+    <WaitGameLoad>
+      <div className="text-center text-3xl">
+      <GameStatusUnwrapper />
+      </div>
+    </WaitGameLoad>
   );
 }
+
+export default GameStatus;

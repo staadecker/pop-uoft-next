@@ -1,8 +1,9 @@
-import { GameContext, addUserToGame } from "../backend/game";
-import { FirebaseContext } from "../backend/firebase";
+import { useGame } from "../logic/GameContext";
+import { addUserToDb } from "../logic/game_logic";
 import { UserCard } from "./UserCard";
-import { useContext, useState } from "react";
-import { GameStatus } from "./GameStatus";
+import { useState } from "react";
+import Status from "./GameStatus";
+import { useFirebase } from "../logic/FirebaseContext";
 
 export function GameWaitingRoom({
   joinGameCallback,
@@ -24,7 +25,7 @@ export function GameWaitingRoom({
 }
 
 export const UserList = () => {
-  const { users } = useContext(GameContext);
+  const { users } = useGame();
   return (
     <div className="grow basis-0 flex flex-col bg-surface rounded-xl overflow-y-scroll border border-stone-400 text-center py-4 px-2 gap-4">
       <p>
@@ -41,23 +42,22 @@ export const UserList = () => {
 };
 
 export const JoinButton = ({ joined, joinGameCallback }) => {
-  const { db, auth } = useContext(FirebaseContext);
-  const { gameId } = useContext(GameContext);
-
+  const { db, auth } = useFirebase();
+  const { gameId } = useGame();
 
   const [joining, setJoining] = useState(false);
 
   const joinGame = async () => {
     setJoining(true);
     // TODO autogenerate name
-    await addUserToGame(db, gameId, auth.currentUser!.uid);
+    await addUserToDb(db, gameId, auth.currentUser!.uid);
     joinGameCallback();
   };
 
   return (
     <>
       {joined ? (
-        <GameStatus />
+        <Status />
       ) : (
         <div className="flex justify-center h-14">
           <button

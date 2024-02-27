@@ -1,30 +1,37 @@
 import "./index.css";
 
 import Editor from "./lexical/Editor";
-import { GameContext } from "../backend/game";
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
-import { FirebaseContext } from "../backend/firebase";
-import { Work, loadExistingWork, saveProgress } from "../backend/game_work";
-import { EditorContext, getEditorState, setEditorState } from "./editor";
-import { GameStatus } from "./GameStatus";
+import { Work } from "../logic/game_logic";
+import { loadExistingWork } from "../logic/game_logic";
+import { saveProgress } from "../logic/game_logic";
+import {
+  EditorContext,
+  RegisterEditor,
+  getEditorState,
+  setEditorState,
+} from "./EditorContext";
+import { useFirebase } from "../logic/FirebaseContext";
+import { useGame } from "../logic/GameContext";
+import { GameToolbar } from "./GameToolbar";
 
 export function GameWrapper() {
-  const { db, currentUser } = useContext(FirebaseContext);
-  const { gameId, meta, users } = useContext(GameContext);
+  const { db, currentUser } = useFirebase();
+  const { gameId, meta, users } = useGame();
   const [work, setWork] = useState<Work | undefined>(undefined);
 
   useEffect(() => {
     const fetch = async () => {
       const work = {
-        "_": {
+        _: {
           state: meta.prompt,
-          name: "Professor's question"
+          name: "Professor's question",
         },
-        ...(await loadExistingWork(db, gameId, currentUser.uid, users))
-      }
+        ...(await loadExistingWork(db, gameId, currentUser.uid, users)),
+      };
       if (!(currentUser.uid in work))
-        work[currentUser.uid] = { state: undefined, name: "Your answer"};
+        work[currentUser.uid] = { state: undefined, name: "Your answer" };
       setWork(work);
     };
     fetch();
@@ -40,10 +47,12 @@ export function GameWrapper() {
               <div key={userId}>
                 <h1>{name}</h1>
                 <EditorContext>
-                  <EditorBlock
-                    startingState={state}
-                    editable={userId == currentUser.uid}
-                  />
+                  <RegisterEditor id={userId}>
+                    <EditorBlock
+                      startingState={state}
+                      editable={userId == currentUser.uid}
+                    />
+                  </RegisterEditor>
                 </EditorContext>
               </div>
             );
@@ -53,12 +62,6 @@ export function GameWrapper() {
   );
 }
 
-const GameToolbar = () => {
-  return <div className="bg-slate-100 w-full h-10">
-    <GameStatus/>
-  </div>;
-};
-
 function EditorBlock({
   startingState,
   editable,
@@ -66,8 +69,8 @@ function EditorBlock({
   startingState: string | undefined;
   editable: boolean;
 }) {
-  const { db, currentUser } = useContext(FirebaseContext);
-  const { gameId } = useContext(GameContext);
+  const { db, currentUser } = useFirebase();
+  const { gameId } = useGame();
   const [editor] = useLexicalComposerContext();
 
   const saveGame = () => {
@@ -81,9 +84,9 @@ function EditorBlock({
   };
 
   useEffect(() => {
-    editor.setEditable(editable);
-    if (!startingState) return;
-    setEditorState(editor, startingState);
+    if (startingState) {
+      setEditorState(editor, startingState);
+    }
   }, [editor, startingState]);
 
   return (

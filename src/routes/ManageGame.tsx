@@ -1,9 +1,8 @@
-import { Link, useLoaderData } from "react-router-dom";
-import { GameContext, GameContextProvider } from "../backend/game";
+import { useLoaderData } from "react-router-dom";
+import { GameContextProvider, useGame } from "../logic/GameContext";
 import { QRCodeSVG } from "qrcode.react";
-import { JoinButton, UserList } from "../components/WaitingRoom";
-import { useContext } from "react";
-import { GameStatus } from "../components/GameStatus";
+import { UserList } from "../components/WaitingRoom";
+import Status from "../components/GameStatus";
 
 const ManageGame = () => {
   const { gameId } = useLoaderData() as { gameId: string };
@@ -11,9 +10,9 @@ const ManageGame = () => {
   const link = process.env.DOMAIN + "/" + gameId;
 
   return (
-    <GameContextProvider gameId={gameId} waitForLoad>
+    <GameContextProvider gameId={gameId}>
       <div className="flex flex-col">
-        <GameStatus/>
+        <Status/>
         <div className="flex flex-row items-center h-screen w-screen">
           <div className="flex flex-col items-center basis-1/2 space-y-8">
             <h1 className="text-4xl font-bold">Join Game at</h1>
@@ -36,7 +35,7 @@ const ManageGame = () => {
 };
 
 const QRCode = () => {
-  const { gameId } = useContext(GameContext);
+  const { gameId } = useGame();
   return (
     <div className="p-8 bg-white">
       <QRCodeSVG value={process.env.DOMAIN + gameId} size={300} />
