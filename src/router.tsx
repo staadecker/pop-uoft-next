@@ -2,11 +2,12 @@ import { createBrowserRouter } from "react-router-dom";
 import CreateGame from "./routes/CreateGame";
 import ManageGame from "./routes/ManageGame";
 import GamePage from "./routes/GamePage";
+import MessagePage from "./components/MessagePage";
 
 export const router = createBrowserRouter([
   {
     path: "/",
-    element: <p>Follow a game link to use this site.</p>,
+    element: <MessagePage msg="Use a game link to use this site." />,
   },
   {
     path: "/create_game",
@@ -15,17 +16,11 @@ export const router = createBrowserRouter([
   {
     path: "/manage_game/:gameId",
     element: <ManageGame />,
-    loader: async ({ params }) => {
-      const gameId = params.gameId;
-      return { gameId };
-    },
+    loader: ({ params }) => ({ gameId: params.gameId }),
   },
   {
     path: "/:gameId",
     element: <GamePage />,
-    loader: async ({ params }) => {
-      const gameId = params.gameId;
-      return { gameId };
-    },
+    loader: ({ params }) => ({ gameId: params.gameId }),
   },
 ]);

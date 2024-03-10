@@ -11,13 +11,10 @@ import { CharacterLimitPlugin } from "@lexical/react/LexicalCharacterLimitPlugin
 // import {CheckListPlugin} from '@lexical/react/LexicalCheckListPlugin';
 import { ClearEditorPlugin } from "@lexical/react/LexicalClearEditorPlugin";
 import LexicalClickableLinkPlugin from "@lexical/react/LexicalClickableLinkPlugin";
-// import {CollaborationPlugin} from '@lexical/react/LexicalCollaborationPlugin';
 import LexicalErrorBoundary from "@lexical/react/LexicalErrorBoundary";
-// import {HashtagPlugin} from '@lexical/react/LexicalHashtagPlugin';
 import { HistoryPlugin } from "@lexical/react/LexicalHistoryPlugin";
 import { HorizontalRulePlugin } from "@lexical/react/LexicalHorizontalRulePlugin";
 import { ListPlugin } from "@lexical/react/LexicalListPlugin";
-// import {PlainTextPlugin} from '@lexical/react/LexicalPlainTextPlugin';
 import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
 import { TabIndentationPlugin } from "@lexical/react/LexicalTabIndentationPlugin";
 import { TablePlugin } from "@lexical/react/LexicalTablePlugin";
@@ -25,6 +22,7 @@ import { useEffect, useState } from "react";
 
 import { useSettings } from "./context/SettingsContext";
 import { useSharedHistoryContext } from "./context/SharedHistoryContext";
+import ActionsPlugin from "./plugins/ActionsPlugin";
 import AutocompletePlugin from "./plugins/AutocompletePlugin";
 import AutoLinkPlugin from "./plugins/AutoLinkPlugin";
 import CodeActionMenuPlugin from "./plugins/CodeActionMenuPlugin";
@@ -59,8 +57,21 @@ import TreeViewPlugin from "./plugins/TreeViewPlugin";
 import ContentEditable from "./ui/ContentEditable";
 import Placeholder from "./ui/Placeholder";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
+import { setEditorState } from "../../game_logic/EditorContext";
 
-export default function Editor({ editable: isEditable }): JSX.Element {
+export default function Editor({
+  editable = true,
+  startingState,
+  placeholderText = "Enter some text...",
+  comments = false,
+  fileIO = false,
+}: {
+  editable?: boolean;
+  startingState?: string;
+  placeholderText?: string;
+  comments?: boolean;
+  fileIO?: boolean;
+}): JSX.Element {
   const { historyState } = useSharedHistoryContext();
   const {
     settings: {
@@ -79,10 +90,13 @@ export default function Editor({ editable: isEditable }): JSX.Element {
 
   const [editor] = useLexicalComposerContext();
   useEffect(() => {
-    editor.setEditable(isEditable);
-  }, [isEditable, editor]);
+    editor.setEditable(editable);
+  }, [editable, editor]);
+  useEffect(() => {
+    if (startingState) setEditorState(editor, startingState);
+  }, [startingState, editor]);
   const placeholder = (
-    <Placeholder>{isEditable ? "Enter some text..." : ""}</Placeholder>
+    <Placeholder>{editable ? placeholderText : ""}</Placeholder>
   );
   const [floatingAnchorElem, setFloatingAnchorElem] =
     useState<HTMLDivElement | null>(null);
@@ -116,7 +130,7 @@ export default function Editor({ editable: isEditable }): JSX.Element {
 
   return (
     <div className="editor-shell">
-      {isRichText && isEditable && (
+      {isRichText && editable && (
         <ToolbarPlugin setIsLinkEditMode={setIsLinkEditMode} />
       )}
       <div
@@ -137,7 +151,7 @@ export default function Editor({ editable: isEditable }): JSX.Element {
         <KeywordsPlugin />
         <SpeechToTextPlugin />
         <AutoLinkPlugin />
-        <CommentPlugin providerFactory={undefined} />
+        {comments && <CommentPlugin providerFactory={undefined} />}
         {
           <>
             {<HistoryPlugin externalHistoryState={historyState} />}
@@ -169,7 +183,7 @@ export default function Editor({ editable: isEditable }): JSX.Element {
             {/* <TwitterPlugin /> */}
             {/* <YouTubePlugin /> */}
             {/* <FigmaPlugin /> */}
-            {!isEditable && <LexicalClickableLinkPlugin />}
+            {!editable && <LexicalClickableLinkPlugin />}
             <HorizontalRulePlugin />
             <EquationsPlugin />
             <ExcalidrawPlugin />
@@ -206,7 +220,7 @@ export default function Editor({ editable: isEditable }): JSX.Element {
         {isAutocomplete && <AutocompletePlugin />}
         <div>{showTableOfContents && <TableOfContentsPlugin />}</div>
         {shouldUseLexicalContextMenu && <ContextMenuPlugin />}
-        {/* <ActionsPlugin isRichText={isRichText} /> */}
+        {editable && <ActionsPlugin supportFileIO={fileIO} />}
       </div>
       {showTreeView && <TreeViewPlugin />}
     </div>

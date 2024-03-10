@@ -2,18 +2,20 @@ import { FirebaseApp, initializeApp } from "firebase/app";
 import { Auth, User, getAuth, signInAnonymously } from "firebase/auth";
 import { Firestore, getFirestore } from "firebase/firestore";
 import { createContext, useContext, useEffect, useState } from "react";
+import Loading from "../components/Loading";
 
 type FirebaseContext = {
   app: FirebaseApp;
   auth: Auth;
   db: Firestore;
-  currentUser: User | null | undefined;
+  currentUser: User;
 };
 
+// @ts-ignore
 const FirebaseContext = createContext<FirebaseContext>(null);
 
 export const FirebaseProvider = (props: { children: React.ReactNode }) => {
-  const [currentUser, setCurrentUser] = useState<User | null | undefined>();
+  const [currentUser, setCurrentUser] = useState<User | undefined>();
 
   const app = initializeApp({
     apiKey: "AIzaSyCnIpYjoP9LBwfEyEcMQgq4gd0vaa6BstA",
@@ -27,13 +29,16 @@ export const FirebaseProvider = (props: { children: React.ReactNode }) => {
   const db = getFirestore(app);
 
   useEffect(() => {
-    signInAnonymously(auth)
-      .then((userCredential) => {
-        console.log("Signed in as: ", userCredential.user.uid);
-        setCurrentUser(userCredential.user);
-      })
+    signInAnonymously(auth).then((userCredential) => {
+      console.log("Signed in as: ", userCredential.user.uid);
+      setCurrentUser(userCredential.user);
+    });
   }, []);
 
+  if (currentUser === undefined) {
+    return <Loading fullScreen />;
+  }
+  
   return (
     <FirebaseContext.Provider value={{ app, auth, db, currentUser }}>
       {props.children}
@@ -41,6 +46,12 @@ export const FirebaseProvider = (props: { children: React.ReactNode }) => {
   );
 };
 
-export const useFirebase = () => {
-  return useContext(FirebaseContext);
+export const useFirebase = (): FirebaseContext => {
+  const context = useContext(FirebaseContext);
+
+  if (context === null) {
+    throw new Error("useFirebase must be used within a FirebaseProvider");
+  }
+
+  return context;
 };

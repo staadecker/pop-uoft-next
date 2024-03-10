@@ -1,18 +1,21 @@
 {
   "name": "pop-uoft",
-  "version": "1.0.0",
+  "version": "0.0.0",
   "repository": "https://github.com/staadecker/pop-uoft",
   "author": "Martin Staadecker",
   "license": "MIT",
   "private": true,
-  "source": "src/index.html",
+  "type": "module",
   "browserslist": "defaults",
   "scripts": {
-    "start": "parcel",
-    "build": "parcel build",
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "preview": "vite preview",
     "deploy": "yarn build && firebase deploy"
   },
   "dependencies": {
+    "@cassiozen/usestatemachine": "^1.0.1",
     "@emotion/react": "^11.11.3",
     "@emotion/styled": "^11.11.0",
     "@excalidraw/excalidraw": "^0.17.3",
@@ -32,7 +35,6 @@
     "@material-ui/core": "^4.12.4",
     "@mui/lab": "^5.0.0-alpha.166",
     "@mui/material": "^5.15.11",
-    "@xstate/react": "^4.1.0",
     "firebase": "^10.8.0",
     "katex": "^0.16.9",
     "lexical": "^0.13.1",
@@ -43,22 +45,25 @@
     "react-dom": "^18.2.0",
     "react-error-boundary": "^4.0.12",
     "react-router-dom": "^6.22.1",
-    "xstate": "^5.8.0",
     "yjs": "^13.6.12"
   },
   "devDependencies": {
-    "@parcel/optimizer-data-url": "2.11.0",
-    "@parcel/transformer-inline-string": "2.11.0",
-    "@parcel/transformer-svg-react": "^2.11.0",
     "@types/react": "^18.2.56",
     "@types/react-dom": "^18.2.19",
     "@types/react-router-dom": "^5.3.3",
+    "@typescript-eslint/eslint-plugin": "^7.0.2",
+    "@typescript-eslint/parser": "^7.0.2",
+    "@vitejs/plugin-react-swc": "^3.5.0",
+    "autoprefixer": "^10.4.18",
     "buffer": "^5.5.0||^6.0.0",
-    "parcel": "^2.11.0",
-    "parcel-reporter-static-files-copy": "^1.5.3",
+    "eslint": "^8.56.0",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-react-refresh": "^0.4.5",
     "postcss": "^8.4.35",
     "process": "^0.11.10",
-    "tailwindcss": "^3.4.1"
+    "tailwindcss": "^3.4.1",
+    "typescript": "^5.2.2",
+    "vite": "^5.1.4"
   },
   "engines": {
     "npm": "please-use-yarn"

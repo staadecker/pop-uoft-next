@@ -1,58 +1,39 @@
-"use client";
-
-import { GameContextProvider, useGame } from "../logic/GameContext";
+import { GameContextProvider, useGame } from "../game_logic/GameContext";
 import { GameWrapper as GameInProgress } from "../components/GameInProgress";
-import { useState } from "react";
 import { GameWaitingRoom } from "../components/WaitingRoom";
 import { useLoaderData } from "react-router-dom";
-import { useFirebase } from "../logic/FirebaseContext";
-import { Status } from "../logic/game_logic";
+import Loading from "../components/Loading";
+import MessagePage from "../components/MessagePage";
 
 export default function GameContextWrapper() {
   const { gameId } = useLoaderData() as { gameId: string };
   return (
-    <GameContextProvider gameId={gameId}>
-      <GameLoadingWrapper />
+    <GameContextProvider gameId={gameId} isPlayer={true}>
+      <GameRouter />
     </GameContextProvider>
   );
 }
 
-function GameLoadingWrapper() {
-  const { meta } = useGame();
-  const { currentUser } = useFirebase();
+const GameRouter = () => {
+  const { state } = useGame();
 
-  if (meta === undefined) return <p>Loading...</p>;
-  if (meta === null) return <p>No such game found</p>;
-  if (currentUser === undefined) return <p>Creating user...</p>;
-
-  return <GameWaitOrPlayWrapper />;
-}
-
-const GameWaitOrPlayWrapper = () => {
-  const { users, status } = useGame();
-  const { currentUser } = useFirebase();
-
-  const [joined, setJoined] = useState(
-    () => users[currentUser!.uid] !== undefined
-  );
-
-  switch (status) {
-    case Status.WAITING:
-      return (
-        <GameWaitingRoom
-          joined={joined}
-          joinGameCallback={() => setJoined(true)}
-        />
-      );
-    case Status.IN_PROGRESS:
-      if (joined) {
-        return <GameInProgress />;
-      } else {
-        return <p>Game already started</p>;
-      }
-    case Status.FINISHED:
-      return <p>Game finished</p>;
+  switch (state.value) {
+    case "loading_game":
+    case "loaded":
+    case "loading_work":
+      return <Loading fullScreen/>;
+    case "game_not_found":
+      return <MessagePage msg="Oops. This link doesn't exist!" error />;
+    case "waiting":
+      return <GameWaitingRoom />;
+    case "in_progress":
+    case "saving_work":
+      return <GameInProgress />;
+    case "finished":
+      return <MessagePage msg="Thank you for playing &#127881;" />;
+    case "already_started":
+      return <MessagePage msg="Game already started &#128550;" />;
     default:
-      throw new Error("Don't know how to handle status: " + status);
+      return <MessagePage msg={"Oops. The state " + state.value + " is unexpected."} error />;
   }
 };

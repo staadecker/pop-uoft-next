@@ -1,24 +1,31 @@
+import "./index.css";
 import { createRoot } from "react-dom/client";
 import { StrictMode } from "react";
 import { RouterProvider } from "react-router-dom";
-import { FirebaseProvider } from "./logic/FirebaseContext";
+import { FirebaseProvider } from "./firebase/FirebaseContext";
 import { router } from "./router";
+import Footer from "./components/Footer";
+import MessagePage from "./components/MessagePage";
+import { ErrorBoundary } from "react-error-boundary";
 
-const USE_STRICT_MODE = true;
-
-const container = document.getElementById("app");
+const container = document.getElementById("root");
 const root = createRoot(container!);
 
 root.render(
-  USE_STRICT_MODE ? (
-    <StrictMode>
-      <FirebaseProvider>
-        <RouterProvider router={router} />
-      </FirebaseProvider>
-    </StrictMode>
-  ) : (
+  <StrictMode>
     <FirebaseProvider>
-      <RouterProvider router={router} />
+      <div className="flex flex-col w-screen h-screen">
+        <div className="grow">
+          <ErrorBoundary
+            FallbackComponent={() => (
+              <MessagePage msg="Oops. Something went wrong." error />
+            )}
+          >
+            <RouterProvider router={router} />
+          </ErrorBoundary>
+        </div>
+        <Footer />
+      </div>
     </FirebaseProvider>
-  )
+  </StrictMode>
 );

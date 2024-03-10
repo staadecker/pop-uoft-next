@@ -71,9 +71,9 @@ async function validateEditorState(editor: LexicalEditor): Promise<void> {
 }
 
 export default function ActionsPlugin({
-  isRichText,
+  supportFileIO,
 }: {
-  isRichText: boolean;
+  supportFileIO: boolean;
 }): JSX.Element {
   const [editor] = useLexicalComposerContext();
   const [isEditable, setIsEditable] = useState(() => editor.isEditable());
@@ -134,7 +134,7 @@ export default function ActionsPlugin({
 
   return (
     <div className="actions">
-      {SUPPORT_SPEECH_RECOGNITION && (
+      {/* {SUPPORT_SPEECH_RECOGNITION && (
         <button
           onClick={() => {
             editor.dispatchCommand(SPEECH_TO_TEXT_COMMAND, !isSpeechToText);
@@ -149,28 +149,32 @@ export default function ActionsPlugin({
         >
           <i className="mic" />
         </button>
+      )} */}
+      {supportFileIO && (
+        <>
+          <button
+            className="action-button import"
+            onClick={() => importFile(editor)}
+            title="Import"
+            aria-label="Import editor state from JSON"
+          >
+            <i className="import" />
+          </button>
+          <button
+            className="action-button export"
+            onClick={() =>
+              exportFile(editor, {
+                fileName: `Playground ${new Date().toISOString()}`,
+                source: "Playground",
+              })
+            }
+            title="Export"
+            aria-label="Export editor state to JSON"
+          >
+            <i className="export" />
+          </button>
+        </>
       )}
-      <button
-        className="action-button import"
-        onClick={() => importFile(editor)}
-        title="Import"
-        aria-label="Import editor state from JSON"
-      >
-        <i className="import" />
-      </button>
-      <button
-        className="action-button export"
-        onClick={() =>
-          exportFile(editor, {
-            fileName: `Playground ${new Date().toISOString()}`,
-            source: "Playground",
-          })
-        }
-        title="Export"
-        aria-label="Export editor state to JSON"
-      >
-        <i className="export" />
-      </button>
       <button
         className="action-button clear"
         disabled={isEditorEmpty}
@@ -184,7 +188,7 @@ export default function ActionsPlugin({
       >
         <i className="clear" />
       </button>
-      <button
+      {/* <button
         className={`action-button ${!isEditable ? "unlock" : "lock"}`}
         onClick={() => {
           // Send latest editor state to commenting validation server
@@ -197,7 +201,7 @@ export default function ActionsPlugin({
         aria-label={`${!isEditable ? "Unlock" : "Lock"} read-only mode`}
       >
         <i className={!isEditable ? "unlock" : "lock"} />
-      </button>
+      </button> */}
       {isCollabActive && (
         <button
           className="action-button connect"

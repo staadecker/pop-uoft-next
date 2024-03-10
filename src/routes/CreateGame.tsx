@@ -1,79 +1,58 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import LoadingButton from "@mui/lab/LoadingButton";
-import { doc, setDoc } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 import Editor from "../components/lexical/Editor";
-import { EditorContext, getEditorState } from "../components/EditorContext";
+import { EditorContext, getEditorState } from "../game_logic/EditorContext";
 import { InputAdornment, TextField } from "@material-ui/core";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
-import { useFirebase } from "../logic/FirebaseContext";
-
-const get_random_game_id = (length) => {
-  let result = "";
-  const characters = "abcdefghijklmnopqrstuvwxyz0123456789";
-  const charactersLength = characters.length;
-  for (let i = 0; i < length; i++) {
-    result += characters.charAt(Math.floor(Math.random() * charactersLength));
-  }
-  return result;
-};
-
-const GameButton = ({ loading }) => {
-  return (
-    <LoadingButton
-      loading={loading}
-      type="submit"
-      color="primary"
-      variant="contained"
-    >
-      Create Game
-    </LoadingButton>
-  );
-};
+import { useFirebase } from "../firebase/FirebaseContext";
+import { createGame } from "../firebase/db_queries";
 
 const CreateGame = () => {
   const { db } = useFirebase();
   const navigate = useNavigate();
   const [editor] = useLexicalComposerContext();
   const [submitting, setSubmitting] = useState(false);
+  const submitButton = useRef<HTMLButtonElement>(null);
 
-  const createGame = async (e) => {
-    console.log("Creating game...");
+  const onSubmit = async (e: React.FormEvent) => {
+    // This is necessary since some of the Editor events bubble up and will trigger the form submission :/
     e.preventDefault();
+    if (submitButton.current !== (e.nativeEvent as SubmitEvent).submitter) return;
+    
     setSubmitting(true);
+    const formData = new FormData(e.target as HTMLFormElement);
 
-    const formData = new FormData(e.target);
+    const gameId = await createGame(
+      db,
+      Number(formData.get("waitingTime")),
+      Number(formData.get("popInterval")),
+      Number(formData.get("numberOfPops")),
+      getEditorState(editor)
+    );
 
-    const game_id = get_random_game_id(3);
-    await setDoc(doc(db, "games", game_id), {
-      startTime: new Date(
-        Date.now() + 1000 * 60 * Number(formData.get("waitingTime"))
-      ),
-      popInterval: Number(formData.get("popInterval")),
-      numberOfPops: Number(formData.get("numberOfPops")),
-      prompt: getEditorState(editor),
-    });
-    navigate("/manage_game/" + game_id);
+    navigate("/manage_game/" + gameId);
   };
 
   return (
-    <div className="w-screen flex flex-col items-center p-5">
-      <form onSubmit={createGame}>
-        <div className="flex flex-col space-y-4 max-w-screen-lg items-left">
+    <div className="w-full flex flex-col items-center p-5">
+      <form onSubmit={onSubmit}>
+        <div className="flex flex-col space-y-8 max-w-screen-xl items-left">
+          
           <div>
+            <h1 className="text-lg">Question for students</h1>
+            <Editor placeholderText="Enter your question..." fileIO />
+          </div>
+
+          <div className="flex flex-row space-x-8">
             <TextField
-              label="Number of pops"
+              label="Number of rounds"
               name="numberOfPops"
               defaultValue={3}
               type="number"
-              InputLabelProps={{
-                shrink: true,
-              }}
             />
-          </div>
-          <div>
             <TextField
-              label="Pop interval"
+              label="Duration of rounds"
               defaultValue={3}
               type="number"
               name="popInterval"
@@ -83,25 +62,28 @@ const CreateGame = () => {
                 ),
               }}
             />
-          </div>
-          <div>
             <TextField
-              label="Time in waiting room"
-              defaultValue={2}
+              label="Time to join game"
+              defaultValue={120}
               type="number"
               name="waitingTime"
               InputProps={{
                 endAdornment: (
-                  <InputAdornment position="end">min</InputAdornment>
+                  <InputAdornment position="end">sec</InputAdornment>
                 ),
               }}
             />
           </div>
-          <div>
-            <h1 className="text-lg">Question for students:</h1>
-            <Editor editable />
-          </div>
-          <GameButton loading={submitting} />
+
+          <LoadingButton
+            loading={submitting}
+            type="submit"
+            color="primary"
+            variant="contained"
+            ref={submitButton}
+          >
+            Start Game
+          </LoadingButton>
         </div>
       </form>
     </div>

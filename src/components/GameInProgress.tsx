@@ -1,98 +1,50 @@
 import "./index.css";
 
 import Editor from "./lexical/Editor";
-import { useEffect, useState } from "react";
-import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
-import { Work } from "../logic/game_logic";
-import { loadExistingWork } from "../logic/game_logic";
-import { saveProgress } from "../logic/game_logic";
-import {
-  EditorContext,
-  RegisterEditor,
-  getEditorState,
-  setEditorState,
-} from "./EditorContext";
-import { useFirebase } from "../logic/FirebaseContext";
-import { useGame } from "../logic/GameContext";
+
+import { EditorContext, RegisterEditor } from "../game_logic/EditorContext";
+import { useGame } from "../game_logic/GameContext";
 import { GameToolbar } from "./GameToolbar";
+import { UserCard } from "./UserCard";
+import { Works } from "../firebase/db_queries";
+
+export const PROFS_KEY = "__prof";
 
 export function GameWrapper() {
-  const { db, currentUser } = useFirebase();
-  const { gameId, meta, users } = useGame();
-  const [work, setWork] = useState<Work | undefined>(undefined);
+  const { state } = useGame();
 
-  useEffect(() => {
-    const fetch = async () => {
-      const work = {
-        _: {
-          state: meta.prompt,
-          name: "Professor's question",
-        },
-        ...(await loadExistingWork(db, gameId, currentUser.uid, users)),
-      };
-      if (!(currentUser.uid in work))
-        work[currentUser.uid] = { state: undefined, name: "Your answer" };
-      setWork(work);
-    };
-    fetch();
-  }, [db, currentUser, gameId, users]);
+  const works: Works = (
+    [{ userId: PROFS_KEY, state: state.context.meta!.question }] as Works
+  ).concat(state.context.priorWorks);
 
   return (
     <div className="flex flex-col items-center">
       <GameToolbar />
       <div className="px-10 py-4 max-w-screen-xl">
-        {work &&
-          Object.entries(work).map(([userId, { state, name }]) => {
-            return (
-              <div key={userId}>
-                <h1>{name}</h1>
-                <EditorContext>
-                  <RegisterEditor id={userId}>
-                    <EditorBlock
-                      startingState={state}
-                      editable={userId == currentUser.uid}
-                    />
-                  </RegisterEditor>
-                </EditorContext>
-              </div>
-            );
-          })}
+        {works.map(({ userId, state: editorState }) => {
+          return (
+            <div key={userId}>
+              <EditorLabel userId={userId} />
+              <EditorContext>
+                <RegisterEditor id={userId}>
+                  <Editor
+                    startingState={editorState}
+                    editable={userId == state.context.currentUserUid}
+                    comments={userId !== PROFS_KEY}
+                    placeholderText="Enter your answer..."
+                  />
+                </RegisterEditor>
+              </EditorContext>
+            </div>
+          );
+        })}
       </div>
     </div>
   );
 }
 
-function EditorBlock({
-  startingState,
-  editable,
-}: {
-  startingState: string | undefined;
-  editable: boolean;
-}) {
-  const { db, currentUser } = useFirebase();
-  const { gameId } = useGame();
-  const [editor] = useLexicalComposerContext();
+const EditorLabel = ({ userId }: { userId: string }) => {
+  if (userId === PROFS_KEY) return <h1>Question for students:</h1>;
 
-  const saveGame = () => {
-    saveProgress(
-      db,
-      gameId,
-      currentUser.uid,
-      currentUser.uid,
-      getEditorState(editor)
-    );
-  };
-
-  useEffect(() => {
-    if (startingState) {
-      setEditorState(editor, startingState);
-    }
-  }, [editor, startingState]);
-
-  return (
-    <>
-      <Editor editable={editable} />
-      {editable && <button onClick={saveGame}>Save Game</button>}
-    </>
-  );
-}
+  return <UserCard userId={userId} />;
+};

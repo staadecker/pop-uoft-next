@@ -1,43 +1,82 @@
 import { useEffect, useState } from "react";
-import { useGame } from "../logic/GameContext";
-import { Status, getNextEventTime } from "../logic/game_logic";
-import WaitGameLoad from "./WaitGameLoad";
+import { Context, useGame } from "../game_logic/GameContext";
+import { getExpectedState } from "../game_logic/state_machine";
+import Loading from "./Loading";
 
-function GameStatusUnwrapper() {
-  const { meta, status } = useGame();
+const getTimeInfo = (context: Context): string => {
+  const { state, timeToChange } = getExpectedState(context);
 
-  const [timeInfo, setTimeInfo] = useState(getNextEventTime(meta));
+  let prefix = "";
+  switch (state) {
+    case "waiting":
+      prefix = "Game starts in %s";
+      break;
+    case "in_progress":
+      prefix = "Swap in %s";
+      break;
+    case "saving_work":
+      prefix = "Saving your work %s";
+      break;
+    case "finished":
+      return "Game ended";
+    default:
+      throw new Error("Don't know how to handle status: " + state);
+  }
+
+  const minutes = Math.floor(timeToChange! / 60000);
+  const seconds = ((timeToChange! % 60000) / 1000).toFixed(0).padStart(2, "0");
+  return prefix.replace("%s", `${minutes}:${seconds}`);
+};
+
+function GameStatusText() {
+  const { state } = useGame();
+
+  const [timeInfo, setTimeInfo] = useState(getTimeInfo(state.context));
 
   useEffect(() => {
+    if (
+      !["waiting", "in_progress", "loaded", "wait_for_save"].includes(
+        state.value
+      )
+    ) {
+      setTimeInfo(getTimeInfo(state.context));
+      console.log("Avoiding interval because state is " + state.value);
+      return;
+    }
+
     const timer = setInterval(() => {
-      setTimeInfo(getNextEventTime(meta));
+      setTimeInfo(getTimeInfo(state.context));
     }, 500);
-
     return () => clearInterval(timer);
-  });
+  }, [state.value, state.context.meta]);
 
-  switch (status) {
-    case Status.UNKNOWN:
-      return <p>Loading...</p>;
-    case Status.WAITING:
-      return <p>Game starts in <strong>{timeInfo.timeRemaining}</strong></p>
-    case Status.IN_PROGRESS:
-      return <p>Swap in <strong>{timeInfo.timeRemaining}</strong></p>
-    case Status.FINISHED:
-      return <p>Game ended</p>
+  switch (state.value) {
+    case "game_not_found":
+      return <p>Game not found!</p>;
+    case "loading_game":
+    case "loading_work":
+      return <Loading />;
+    case "loaded":
+    case "waiting":
+    case "in_progress":
+    case "finished":
+    case "saving_work":
+      return (
+        <p>
+          <strong>{timeInfo}</strong>
+        </p>
+      );
     default:
-      throw new Error("Don't know how to handle status: " + status);
+      throw new Error("Don't know how to handle status: " + state.value);
   }
 }
 
 const GameStatus = () => {
   return (
-    <WaitGameLoad>
-      <div className="text-center text-3xl">
-      <GameStatusUnwrapper />
-      </div>
-    </WaitGameLoad>
+    <div className="text-center text-3xl py-4 bg-slate-100 w-full">
+      <GameStatusText />
+    </div>
   );
-}
+};
 
 export default GameStatus;
