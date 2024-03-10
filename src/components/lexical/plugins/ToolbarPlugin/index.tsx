@@ -94,7 +94,7 @@ import FontSize from "./fontSize";
 
 const blockTypeToBlockName = {
   bullet: "Bulleted List",
-  check: "Check List",
+  // check: "Check List",
   code: "Code Block",
   h1: "Heading 1",
   h2: "Heading 2",
@@ -324,13 +324,13 @@ function BlockFormatDropDown({
         <i className="icon numbered-list" />
         <span className="text">Numbered List</span>
       </DropDownItem>
-      <DropDownItem
+      {/* <DropDownItem
         className={"item " + dropDownActiveClass(blockType === "check")}
         onClick={formatCheckList}
       >
         <i className="icon check-list" />
         <span className="text">Check List</span>
-      </DropDownItem>
+      </DropDownItem> */}
       <DropDownItem
         className={"item " + dropDownActiveClass(blockType === "quote")}
         onClick={formatQuote}
@@ -889,13 +889,13 @@ export default function ToolbarPlugin({
         </DropDown>
       ) : (
         <>
-          <FontDropDown
+          {/* <FontDropDown
             disabled={!isEditable}
             style={"font-family"}
             value={fontFamily}
             editor={editor}
           />
-          <Divider />
+          <Divider /> */}
           <FontSize
             selectionFontSize={fontSize.slice(0, -2)}
             editor={editor}

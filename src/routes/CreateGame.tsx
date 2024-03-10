@@ -18,8 +18,9 @@ const CreateGame = () => {
   const onSubmit = async (e: React.FormEvent) => {
     // This is necessary since some of the Editor events bubble up and will trigger the form submission :/
     e.preventDefault();
-    if (submitButton.current !== (e.nativeEvent as SubmitEvent).submitter) return;
-    
+    if (submitButton.current !== (e.nativeEvent as SubmitEvent).submitter)
+      return;
+
     setSubmitting(true);
     const formData = new FormData(e.target as HTMLFormElement);
 
@@ -37,8 +38,7 @@ const CreateGame = () => {
   return (
     <div className="w-full flex flex-col items-center p-5">
       <form onSubmit={onSubmit}>
-        <div className="flex flex-col space-y-8 max-w-screen-xl items-left">
-          
+        <div className="flex flex-col space-y-8 max-w-screen-xl items-stretch">
           <div>
             <h1 className="text-lg">Question for students</h1>
             <Editor placeholderText="Enter your question..." fileIO />
@@ -74,16 +74,19 @@ const CreateGame = () => {
               }}
             />
           </div>
-
-          <LoadingButton
-            loading={submitting}
-            type="submit"
-            color="primary"
-            variant="contained"
-            ref={submitButton}
-          >
-            Start Game
-          </LoadingButton>
+          <div className="flex flex-row justify-center">
+            <LoadingButton
+              className="grow flex rounded-2xl max-w-xl justify-center items-center gap-3 bg-primarycontainer"
+              loading={submitting}
+              type="submit"
+              variant="contained"
+              ref={submitButton}
+            >
+              <div className="text-onprimarycontainer text-lg font-bold">
+                Start Game
+              </div>
+            </LoadingButton>
+          </div>
         </div>
       </form>
     </div>

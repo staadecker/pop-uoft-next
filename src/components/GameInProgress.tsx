@@ -20,10 +20,10 @@ export function GameWrapper() {
   return (
     <div className="flex flex-col items-center">
       <GameToolbar />
-      <div className="px-10 py-4 max-w-screen-xl">
+      <div className="px-10 py-4 max-w-screen-xl space-y-8">
         {works.map(({ userId, state: editorState }) => {
           return (
-            <div key={userId}>
+            <div key={userId} className="space-y-2" >
               <EditorLabel userId={userId} />
               <EditorContext>
                 <RegisterEditor id={userId}>
@@ -44,7 +44,7 @@ export function GameWrapper() {
 }
 
 const EditorLabel = ({ userId }: { userId: string }) => {
-  if (userId === PROFS_KEY) return <h1>Question for students:</h1>;
+  if (userId === PROFS_KEY) return <h1 className="text-xl bold">Question</h1>;
 
   return <UserCard userId={userId} />;
 };

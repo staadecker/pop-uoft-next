@@ -188,12 +188,12 @@ function getBaseOptions(editor: LexicalEditor, showModal: ShowModal) {
       onSelect: () =>
         editor.dispatchCommand(INSERT_UNORDERED_LIST_COMMAND, undefined),
     }),
-    new ComponentPickerOption("Check List", {
-      icon: <i className="icon check" />,
-      keywords: ["check list", "todo list"],
-      onSelect: () =>
-        editor.dispatchCommand(INSERT_CHECK_LIST_COMMAND, undefined),
-    }),
+    // new ComponentPickerOption("Check List", {
+    //   icon: <i className="icon check" />,
+    //   keywords: ["check list", "todo list"],
+    //   onSelect: () =>
+    //     editor.dispatchCommand(INSERT_CHECK_LIST_COMMAND, undefined),
+    // }),
     new ComponentPickerOption("Quote", {
       icon: <i className="icon quote" />,
       keywords: ["block quote"],

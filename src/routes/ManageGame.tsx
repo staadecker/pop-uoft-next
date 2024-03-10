@@ -2,16 +2,16 @@ import { useLoaderData } from "react-router-dom";
 import { GameContextProvider, useGame } from "../game_logic/GameContext";
 import { QRCodeSVG } from "qrcode.react";
 import { UserList } from "../components/WaitingRoom";
-import GameStatus from "../components/GameStatus";
 import Loading from "../components/Loading";
 import MessagePage from "../components/MessagePage";
+import { GameToolbar } from "../components/GameToolbar";
 
 const ManageGame = () => {
   const { gameId } = useLoaderData() as { gameId: string };
 
   return (
     <GameContextProvider gameId={gameId} isPlayer={false}>
-        <ManageGameRouter />
+      <ManageGameRouter />
     </GameContextProvider>
   );
 };
@@ -54,20 +54,20 @@ const ManageGamePage = () => {
 
   return (
     <div className="flex flex-col">
-      <GameStatus />
-      <div className="flex flex-row items-center h-full w-full p-8">
+      <GameToolbar />
+      <div className="flex flex-row h-full w-full p-8 items-stretch">
         <div className="flex flex-col items-center basis-1/2 space-y-8">
           <h1 className="text-4xl font-bold">Join game at</h1>
           <a
             href={link}
-            className="underline text-6xl font-bold text-blue-900"
+            className="underline text-4xl font-bold text-blue-900"
             target="_blank"
           >
             {link.split("//")[1]}
           </a>
           <QRCode />
         </div>
-        <div className="basis-1/2 bg-red-50">
+        <div className="basis-1/2 flex flex-col">
           <UserList />
         </div>
       </div>

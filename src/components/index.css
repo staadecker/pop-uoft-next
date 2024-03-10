@@ -24,6 +24,7 @@ body {
   position: relative;
   line-height: 1.7;
   font-weight: 400;
+  min-width: 1000px;
 }
 
 .editor-shell .editor-container {

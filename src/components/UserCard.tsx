@@ -6,14 +6,16 @@ export const UserCard = ({ userId }: { userId: string }) => {
   const you = userId === state.context.currentUserUid;
 
   return (
-    <div className="p-2 shrink bg-white rounded-lg shadow hover:shadow-md justify-start items-center gap-2 flex transition-height ease-in duration-500">
-      <div
-        className={`w-6 h-6 rounded-full justify-center items-center flex ${user.displayColor}`}
-      >
-        <img src={`/avatars/${user.displayName}.png`} />
-      </div>
-      <div className="text-black text-xs cursor-default">
-        Anonymous {user.displayName} {you ? "(You)" : ""}
+    <div className="flex flex-row">
+      <div className="flex flex-row p-2 bg-white rounded-lg shadow hover:shadow-md justify-start items-center gap-2 transition-height ease-in duration-500">
+        <div
+          className={`w-6 h-6 rounded-full justify-center items-center flex ${user.displayColor}`}
+        >
+          <img src={`/avatars/${user.displayName}.png`} />
+        </div>
+        <div className="text-black text-xs cursor-default">
+          Anonymous {user.displayName} {you ? "(You)" : ""}
+        </div>
       </div>
     </div>
   );

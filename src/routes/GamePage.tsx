@@ -21,9 +21,12 @@ const GameRouter = () => {
     case "loading_game":
     case "loaded":
     case "loading_work":
-      return <Loading fullScreen/>;
+    case "enter_game":
+      return <Loading fullScreen />;
     case "game_not_found":
       return <MessagePage msg="Oops. This link doesn't exist!" error />;
+    case "not_enough_players":
+      return <MessagePage msg="Not enough players :/" />;
     case "waiting":
       return <GameWaitingRoom />;
     case "in_progress":
@@ -34,6 +37,11 @@ const GameRouter = () => {
     case "already_started":
       return <MessagePage msg="Game already started &#128550;" />;
     default:
-      return <MessagePage msg={"Oops. The state " + state.value + " is unexpected."} error />;
+      return (
+        <MessagePage
+          msg={"Oops. The state " + state.value + " is unexpected."}
+          error
+        />
+      );
   }
 };
