@@ -122,8 +122,8 @@ export const loadPriorWorks = async (
 export const createGame = async (
   db: Firestore,
   waitTime: number,
-  popInterval: number,
-  numberOfPops: number,
+  roundDuration: number,
+  numRounds: number,
   question: string
 ) => {
   const gameId = getRandomGameId(3);
@@ -131,8 +131,8 @@ export const createGame = async (
 
   await setDoc(ref, {
     startTime: new Date(Date.now() + 1000 * waitTime),
-    popInterval,
-    numberOfPops,
+    roundDuration,
+    numRounds,
     question,
   });
   return gameId;

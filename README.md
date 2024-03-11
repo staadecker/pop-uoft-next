@@ -1,6 +1,6 @@
 # Shuffle Quiz
 
-Try it out: [https://pop-uoft.web.app/](https://pop-uoft.web.app/) !
+Try it out: [https://shuffle-quiz.web.app/](https://shuffle-quiz.web.app/) !
 
 ## What is this?
 

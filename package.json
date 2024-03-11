@@ -1,7 +1,7 @@
 {
-  "name": "pop-uoft",
+  "name": "shuffle-quiz",
   "version": "0.0.0",
-  "repository": "https://github.com/staadecker/pop-uoft",
+  "repository": "https://github.com/staadecker/shuffle-quiz",
   "author": "Martin Staadecker",
   "license": "MIT",
   "private": true,

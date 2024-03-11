@@ -2,8 +2,8 @@ import { Timestamp } from "firebase/firestore";
 
 export type GameMetaData = {
     startTime: Timestamp;
-    numberOfPops: number;
-    popInterval: number;
+    numRounds: number;
+    roundDuration: number;
     question: string;
 };
 

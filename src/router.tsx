@@ -2,7 +2,6 @@ import { createBrowserRouter } from "react-router-dom";
 import CreateGame from "./routes/CreateGame";
 import ManageGame from "./routes/ManageGame";
 import GamePage from "./routes/GamePage";
-import MessagePage from "./components/MessagePage";
 
 export const router = createBrowserRouter([
   {

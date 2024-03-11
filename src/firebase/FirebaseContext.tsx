@@ -18,12 +18,12 @@ export const FirebaseProvider = (props: { children: React.ReactNode }) => {
   const [currentUser, setCurrentUser] = useState<User | undefined>();
 
   const app = initializeApp({
-    apiKey: "AIzaSyCnIpYjoP9LBwfEyEcMQgq4gd0vaa6BstA",
-    authDomain: "pop-uoft.firebaseapp.com",
-    projectId: "pop-uoft",
-    storageBucket: "pop-uoft.appspot.com",
-    messagingSenderId: "448097432689",
-    appId: "1:448097432689:web:1a82ae4b88d2f2e28a97d0",
+    apiKey: "AIzaSyBv0iJ3X3EDJ5Im1hBmBDpQ8tKO3F3TjZo",
+    authDomain: "shuffle-quiz.firebaseapp.com",
+    projectId: "shuffle-quiz",
+    storageBucket: "shuffle-quiz.appspot.com",
+    messagingSenderId: "774018965451",
+    appId: "1:774018965451:web:19c826207d24e9d0b8204e",
   });
   const auth = getAuth(app);
   const db = getFirestore(app);
@@ -38,7 +38,7 @@ export const FirebaseProvider = (props: { children: React.ReactNode }) => {
   if (currentUser === undefined) {
     return <Loading fullScreen />;
   }
-  
+
   return (
     <FirebaseContext.Provider value={{ app, auth, db, currentUser }}>
       {props.children}

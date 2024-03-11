@@ -28,8 +28,8 @@ const CreateGame = () => {
     const gameId = await createGame(
       db,
       Number(formData.get("waitingTime")),
-      Number(formData.get("popInterval")),
-      Number(formData.get("numberOfPops")),
+      Number(formData.get("roundDuration")),
+      Number(formData.get("numRounds")),
       getEditorState(editor)
     );
 
@@ -50,7 +50,7 @@ const CreateGame = () => {
             <div className="flex flex-row space-x-8">
               <TextField
                 label="Number of rounds"
-                name="numberOfPops"
+                name="numRounds"
                 defaultValue={3}
                 type="number"
               />
@@ -58,7 +58,7 @@ const CreateGame = () => {
                 label="Round duration"
                 defaultValue={3}
                 type="number"
-                name="popInterval"
+                name="roundDuration"
                 InputProps={{
                   endAdornment: (
                     <InputAdornment position="end">min</InputAdornment>

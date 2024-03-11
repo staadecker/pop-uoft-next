@@ -87,7 +87,7 @@ export const useGameStateMachine = (gameId: string, isPlayer: boolean) => {
         if (context.users[context.currentUserUid] === undefined && isPlayer)
           send("already_started");
 
-        if (Object.keys(context.users).length < context.meta!.numberOfPops)
+        if (Object.keys(context.users).length < context.meta!.numRounds)
           send("not_enough_players");
         const expectedState = getExpectedState(context).state;
         if (expectedState === "in_progress" || expectedState === "saving_work")
@@ -179,14 +179,14 @@ export const getExpectedState = (
   }
 
   let round = 0;
-  const popInterval = context.meta!.popInterval * 60 * 1000;
+  const roundDuration = context.meta!.roundDuration * 60 * 1000;
   let timeSinceEvent = currentTime - startTime;
-  while (timeSinceEvent >= popInterval) {
+  while (timeSinceEvent >= roundDuration) {
     round++;
-    if (round == context.meta!.numberOfPops) {
+    if (round == context.meta!.numRounds) {
       return { state: "finished" };
     }
-    timeSinceEvent -= popInterval;
+    timeSinceEvent -= roundDuration;
   }
 
   if (timeSinceEvent < SAVING_TIME && round > 0) {
@@ -198,7 +198,7 @@ export const getExpectedState = (
   }
 
   return {
-    timeToChange: popInterval - timeSinceEvent,
+    timeToChange: roundDuration - timeSinceEvent,
     state: "in_progress",
     round: round,
   };
