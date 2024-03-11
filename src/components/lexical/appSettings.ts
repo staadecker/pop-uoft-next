@@ -6,7 +6,6 @@
  *
  */
 
-const hostName = window.location.hostname;
 export const isDevPlayground: boolean = false;
 
 export const DEFAULT_SETTINGS = {

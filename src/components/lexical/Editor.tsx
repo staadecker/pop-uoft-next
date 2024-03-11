@@ -20,7 +20,6 @@ import { TabIndentationPlugin } from "@lexical/react/LexicalTabIndentationPlugin
 import { TablePlugin } from "@lexical/react/LexicalTablePlugin";
 import { useEffect, useState } from "react";
 
-import { useSettings } from "./context/SettingsContext";
 import { useSharedHistoryContext } from "./context/SharedHistoryContext";
 import ActionsPlugin from "./plugins/ActionsPlugin";
 import AutocompletePlugin from "./plugins/AutocompletePlugin";
@@ -58,6 +57,7 @@ import ContentEditable from "./ui/ContentEditable";
 import Placeholder from "./ui/Placeholder";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import { setEditorState } from "../../game_logic/EditorContext";
+import { DEFAULT_SETTINGS } from "./appSettings";
 
 export default function Editor({
   editable = true,
@@ -74,19 +74,17 @@ export default function Editor({
 }): JSX.Element {
   const { historyState } = useSharedHistoryContext();
   const {
-    settings: {
-      isAutocomplete,
-      isMaxLength,
-      isCharLimit,
-      isCharLimitUtf8,
-      isRichText,
-      showTreeView,
-      showTableOfContents,
-      shouldUseLexicalContextMenu,
-      tableCellMerge,
-      tableCellBackgroundColor,
-    },
-  } = useSettings();
+    isAutocomplete,
+    isMaxLength,
+    isCharLimit,
+    isCharLimitUtf8,
+    isRichText,
+    showTreeView,
+    showTableOfContents,
+    shouldUseLexicalContextMenu,
+    tableCellMerge,
+    tableCellBackgroundColor,
+  } = DEFAULT_SETTINGS;
 
   const [editor] = useLexicalComposerContext();
   useEffect(() => {
@@ -136,7 +134,7 @@ export default function Editor({
       <div
         className={`editor-container ${showTreeView ? "tree-view" : ""} ${
           !isRichText ? "plain-text" : ""
-        }`}
+        } ${!editable ? "rounded-lg": ""}`}
       >
         {isMaxLength && <MaxLengthPlugin maxLength={30} />}
         <DragDropPaste />

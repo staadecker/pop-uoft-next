@@ -28,7 +28,7 @@ import {
   COMMAND_PRIORITY_HIGH,
   SELECTION_CHANGE_COMMAND,
 } from "lexical";
-import * as React from "react";
+
 import {
   MouseEventHandler,
   ReactPortal,

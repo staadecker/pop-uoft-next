@@ -56,16 +56,18 @@ const ManageGamePage = () => {
     <div className="flex flex-col">
       <GameToolbar />
       <div className="flex flex-row h-full w-full p-8 items-stretch">
-        <div className="flex flex-col items-center basis-1/2 space-y-8">
-          <h1 className="text-4xl font-bold">Join game at</h1>
-          <a
-            href={link}
-            className="underline text-4xl font-bold text-blue-900"
-            target="_blank"
-          >
-            {link.split("//")[1]}
-          </a>
-          <QRCode />
+        <div className="flex flex-col items-center basis-1/2">
+          <h1 className="text-4xl py-4">Join Game</h1>
+          <div className="rounded-xl bg-white text-center space-y-0 pb-8">
+            <QRCode />
+            <a
+              href={link}
+              className="underline text-4xl font-bold text-blue-900 py-8"
+              target="_blank"
+            >
+              {link.split("//")[1]}
+            </a>
+          </div>
         </div>
         <div className="basis-1/2 flex flex-col">
           <UserList />
@@ -78,7 +80,7 @@ const ManageGamePage = () => {
 const QRCode = () => {
   const { state } = useGame();
   return (
-    <div className="p-8 bg-white">
+    <div className="p-8 ">
       <QRCodeSVG
         value={import.meta.env.DOMAIN + state.context.gameId}
         size={300}

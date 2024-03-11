@@ -71,7 +71,7 @@ import {
   UNDO_COMMAND,
 } from "lexical";
 import { Dispatch, useCallback, useEffect, useState } from "react";
-import * as React from "react";
+
 import { IS_APPLE } from "../../shared";
 
 import useModal from "../../hooks/useModal";
@@ -223,14 +223,6 @@ function BlockFormatDropDown({
   const formatBulletList = () => {
     if (blockType !== "bullet") {
       editor.dispatchCommand(INSERT_UNORDERED_LIST_COMMAND, undefined);
-    } else {
-      editor.dispatchCommand(REMOVE_LIST_COMMAND, undefined);
-    }
-  };
-
-  const formatCheckList = () => {
-    if (blockType !== "check") {
-      editor.dispatchCommand(INSERT_CHECK_LIST_COMMAND, undefined);
     } else {
       editor.dispatchCommand(REMOVE_LIST_COMMAND, undefined);
     }

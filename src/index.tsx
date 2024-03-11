@@ -7,25 +7,29 @@ import { router } from "./router";
 import Footer from "./components/Footer";
 import MessagePage from "./components/MessagePage";
 import { ErrorBoundary } from "react-error-boundary";
+import { ThemeProvider } from "@mui/material";
+import theme from "./theme";
 
 const container = document.getElementById("root");
 const root = createRoot(container!);
 
 root.render(
   <StrictMode>
-    <FirebaseProvider>
-      <div className="flex flex-col w-screen h-screen">
-        <div className="grow">
-          <ErrorBoundary
-            FallbackComponent={() => (
-              <MessagePage msg="Oops. Something went wrong." error />
-            )}
-          >
-            <RouterProvider router={router} />
-          </ErrorBoundary>
+    <ThemeProvider theme={theme}>
+      <FirebaseProvider>
+        <div className="flex flex-col w-screen h-screen">
+          <div className="grow">
+            <ErrorBoundary
+              FallbackComponent={() => (
+                <MessagePage msg="Oops. Something went wrong." error />
+              )}
+            >
+              <RouterProvider router={router} />
+            </ErrorBoundary>
+          </div>
+          <Footer />
         </div>
-        <Footer />
-      </div>
-    </FirebaseProvider>
+      </FirebaseProvider>
+    </ThemeProvider>
   </StrictMode>
 );

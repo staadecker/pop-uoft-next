@@ -42,10 +42,8 @@ import {
   KEY_ESCAPE_COMMAND,
   SELECTION_CHANGE_COMMAND,
 } from "lexical";
-import * as React from "react";
 import { Suspense, useCallback, useEffect, useRef, useState } from "react";
 
-import { useSettings } from "../context/SettingsContext";
 import { useSharedHistoryContext } from "../context/SharedHistoryContext";
 import EmojisPlugin from "../plugins/EmojisPlugin";
 import KeywordsPlugin from "../plugins/KeywordsPlugin";
@@ -56,6 +54,7 @@ import ContentEditable from "../ui/ContentEditable";
 import ImageResizer from "../ui/ImageResizer";
 import Placeholder from "../ui/Placeholder";
 import { $isImageNode } from "./ImageNode";
+import { DEFAULT_SETTINGS } from "../appSettings";
 
 const imageCache = new Set();
 
@@ -356,10 +355,7 @@ export default function ImageComponent({
   };
 
   const { historyState } = useSharedHistoryContext();
-  const {
-    settings: { showNestedEditorTreeView },
-  } = useSettings();
-
+  const { showNestedEditorTreeView } = DEFAULT_SETTINGS;
   const draggable = isSelected && $isNodeSelection(selection) && !isResizing;
   const isFocused = isSelected || isResizing;
   return (

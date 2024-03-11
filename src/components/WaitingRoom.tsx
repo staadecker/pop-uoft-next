@@ -22,10 +22,9 @@ export const UserList = () => {
   const users = Object.keys(state.context.users);
   return (
     <div className="grow flex justify-center align-center">
-      <div className="grow max-w-xl flex flex-col bg-surface rounded-xl overflow-y-scroll border-stone-400 border-8 text-center py-4 px-2 gap-4">
+      <div className="grow max-w-xl flex flex-col bg-surface rounded-xl overflow-y-auto border-stone-300 border-2 text-center py-4 px-2 gap-4">
         <p className="text-xl">
-          {users.length} {users.length == 1 ? "player has" : "players have"}{" "}
-          joined
+          {users.length} {users.length == 1 ? "player" : "players"}
         </p>
         <div className="grow flex flex-wrap bg-surface rounded-xl items-start content-start justify-center gap-4">
           {users.map((userId) => (
@@ -54,7 +53,8 @@ export const JoinButton = () => {
     <>
       <div className="flex justify-center h-14">
         <LoadingButton
-          className="grow flex rounded-2xl max-w-md justify-center items-center gap-3 bg-primarycontainer"
+          className="grow flex rounded-2xl max-w-md justify-center items-center gap-3"
+          color="primary"
           variant="contained"
           onClick={joinGame}
           disabled={joining || joined}
@@ -63,7 +63,7 @@ export const JoinButton = () => {
           {!joined && !joining && (
             <img src="/icons/play.svg" width={24} height={24} alt="Play" />
           )}
-          <div className="text-onprimarycontainer text-lg font-bold">
+          <div className="text-lg font-bold">
             {joined ? "You're in!" : "Join Game"}
           </div>
         </LoadingButton>

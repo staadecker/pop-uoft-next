@@ -1,5 +1,4 @@
 import { LexicalComposer } from "@lexical/react/LexicalComposer";
-import { SettingsContext } from "../components/lexical/context/SettingsContext";
 import PlaygroundNodes from "../components/lexical/nodes/PlaygroundNodes";
 import { SharedHistoryContext } from "../components/lexical/context/SharedHistoryContext";
 import { TableContext } from "../components/lexical/plugins/TablePlugin";
@@ -26,7 +25,6 @@ export function EditorContext({
   };
 
   return (
-    <SettingsContext>
       <LexicalComposer initialConfig={initialConfig}>
         <SharedHistoryContext>
           <TableContext>
@@ -34,7 +32,6 @@ export function EditorContext({
           </TableContext>
         </SharedHistoryContext>
       </LexicalComposer>
-    </SettingsContext>
   );
 }
 

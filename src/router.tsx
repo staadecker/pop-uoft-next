@@ -7,7 +7,7 @@ import MessagePage from "./components/MessagePage";
 export const router = createBrowserRouter([
   {
     path: "/",
-    element: <MessagePage msg="Use a game link to use this site." />,
+    element: <CreateGame />,
   },
   {
     path: "/create_game",

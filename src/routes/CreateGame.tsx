@@ -7,6 +7,7 @@ import { InputAdornment, TextField } from "@material-ui/core";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import { useFirebase } from "../firebase/FirebaseContext";
 import { createGame } from "../firebase/db_queries";
+import { Card } from "@mui/material";
 
 const CreateGame = () => {
   const { db } = useFirebase();
@@ -36,43 +37,46 @@ const CreateGame = () => {
   };
 
   return (
-    <div className="w-full flex flex-col items-center p-5">
+    <div className="w-full h-full flex flex-col items-center py-8 px-4">
       <form onSubmit={onSubmit}>
-        <div className="flex flex-col space-y-8 max-w-screen-xl items-stretch">
-          <div>
-            <h1 className="text-lg">Question for students</h1>
+        <Card className="flex flex-col space-y-8 max-w-screen-xl items-stretch p-8 bg-surface">
+          <div className="space-y-2">
+            <h1 className="text-lg">Game question</h1>
             <Editor placeholderText="Enter your question..." fileIO />
           </div>
 
-          <div className="flex flex-row space-x-8">
-            <TextField
-              label="Number of rounds"
-              name="numberOfPops"
-              defaultValue={3}
-              type="number"
-            />
-            <TextField
-              label="Duration of rounds"
-              defaultValue={3}
-              type="number"
-              name="popInterval"
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">min</InputAdornment>
-                ),
-              }}
-            />
-            <TextField
-              label="Time to join game"
-              defaultValue={120}
-              type="number"
-              name="waitingTime"
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">sec</InputAdornment>
-                ),
-              }}
-            />
+          <div className="space-y-2">
+            <h1 className="text-lg">Game settings</h1>
+            <div className="flex flex-row space-x-8">
+              <TextField
+                label="Number of rounds"
+                name="numberOfPops"
+                defaultValue={3}
+                type="number"
+              />
+              <TextField
+                label="Round duration"
+                defaultValue={3}
+                type="number"
+                name="popInterval"
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">min</InputAdornment>
+                  ),
+                }}
+              />
+              <TextField
+                label="Time to join game"
+                defaultValue={120}
+                type="number"
+                name="waitingTime"
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">sec</InputAdornment>
+                  ),
+                }}
+              />
+            </div>
           </div>
           <div className="flex flex-row justify-center">
             <LoadingButton
@@ -83,11 +87,11 @@ const CreateGame = () => {
               ref={submitButton}
             >
               <div className="text-onprimarycontainer text-lg font-bold">
-                Start Game
+                Create Game
               </div>
             </LoadingButton>
           </div>
-        </div>
+        </Card>
       </form>
     </div>
   );

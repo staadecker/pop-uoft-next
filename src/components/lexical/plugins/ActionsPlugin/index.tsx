@@ -8,45 +8,23 @@
 
 import type { LexicalEditor } from "lexical";
 
-import { $createCodeNode, $isCodeNode } from "@lexical/code";
 import { exportFile, importFile } from "@lexical/file";
 import { useCollaborationContext } from "@lexical/react/LexicalCollaborationContext";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import { mergeRegister } from "@lexical/utils";
 import { CONNECTED_COMMAND, TOGGLE_CONNECT_COMMAND } from "@lexical/yjs";
 import {
-  $createTextNode,
   $getRoot,
   $isParagraphNode,
   CLEAR_EDITOR_COMMAND,
   COMMAND_PRIORITY_EDITOR,
 } from "lexical";
-import * as React from "react";
-import { useCallback, useEffect, useState } from "react";
+
+import { useEffect, useState } from "react";
 
 import useModal from "../../hooks/useModal";
 import Button from "../../ui/Button";
-import { PLAYGROUND_TRANSFORMERS } from "../MarkdownTransformers";
-import {
-  SPEECH_TO_TEXT_COMMAND,
-  SUPPORT_SPEECH_RECOGNITION,
-} from "../SpeechToTextPlugin";
 
-async function sendEditorState(editor: LexicalEditor): Promise<void> {
-  const stringifiedEditorState = JSON.stringify(editor.getEditorState());
-  try {
-    await fetch("http://localhost:1235/setEditorState", {
-      body: stringifiedEditorState,
-      headers: {
-        Accept: "application/json",
-        "Content-type": "application/json",
-      },
-      method: "POST",
-    });
-  } catch {
-    // NO-OP
-  }
-}
 
 async function validateEditorState(editor: LexicalEditor): Promise<void> {
   const stringifiedEditorState = JSON.stringify(editor.getEditorState());

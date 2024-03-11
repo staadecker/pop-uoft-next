@@ -1,6 +1,6 @@
 export const GameToolbar = () => {
   return (
-    <div className="w-full shadow-md">
+    <div className="w-full shadow-sm">
       <div className="text-center text-3xl py-4 bg-surface w-full">
         <GameStatusText />
       </div>
@@ -19,10 +19,10 @@ const getTimeInfo = (context: Context): string => {
   let prefix = "";
   switch (state) {
     case "waiting":
-      prefix = "Game starts in %s";
+      prefix = "Starts in %s";
       break;
     case "in_progress":
-      prefix = "Swap in %s";
+      prefix = "Pop in %s";
       break;
     case "saving_work":
       prefix = "Saving your work %s";
