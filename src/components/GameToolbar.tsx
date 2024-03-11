@@ -22,10 +22,10 @@ const getTimeInfo = (context: Context): string => {
       prefix = "Starts in %s";
       break;
     case "in_progress":
-      prefix = "Pop in %s";
+      prefix = "Shuffle in %s";
       break;
     case "saving_work":
-      prefix = "Saving your work %s";
+      prefix = "Shuffling. Please wait %s";
       break;
     case "finished":
       return "Game ended";
