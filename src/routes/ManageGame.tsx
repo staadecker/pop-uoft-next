@@ -29,14 +29,15 @@ const ManageGameRouter = () => {
     case "not_enough_players":
       return <MessagePage msg="Not enough players :/" />;
     case "waiting":
-      return <ManageGamePage />;
     case "in_progress":
     case "saving_work":
     case "already_started":
     case "loading_work":
-      return <MessagePage msg="Game in progress!" />;
+      return <ManageGamePage />;
     case "finished":
       return <MessagePage msg="Game finished!" />;
+    case "permission_denied":
+      return <MessagePage msg="You can only manage games you've created!" error />;
     default:
       return (
         <MessagePage
@@ -55,20 +56,22 @@ const ManageGamePage = () => {
   return (
     <div className="flex flex-col">
       <GameToolbar />
-      <div className="flex flex-row h-full w-full p-8 items-stretch">
-        <div className="flex flex-col items-center basis-1/2">
-          <h1 className="text-4xl py-4">Join Game</h1>
-          <div className="rounded-xl bg-white text-center space-y-0 pb-8 px-4">
-            <QRCode />
-            <a
-              href={link}
-              className="underline text-4xl font-bold text-blue-900 py-8"
-              target="_blank"
-            >
-              {link.split("//")[1]}
-            </a>  
+      <div className="flex flex-row h-full w-full p-8 items-stretch justify-center">
+        {state.value === "waiting" && (
+          <div className="flex flex-col items-center basis-1/2">
+            <h1 className="text-4xl py-4">Join Game</h1>
+            <div className="rounded-xl bg-white text-center space-y-0 pb-8 px-4">
+              <QRCode />
+              <a
+                href={link}
+                className="underline text-4xl font-bold text-blue-900 py-8"
+                target="_blank"
+              >
+                {link.split("//")[1]}
+              </a>
+            </div>
           </div>
-        </div>
+        )}
         <div className="basis-1/2 flex flex-col">
           <UserList />
         </div>

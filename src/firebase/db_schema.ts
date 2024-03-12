@@ -5,6 +5,7 @@ export type GameMetaData = {
     numRounds: number;
     roundDuration: number;
     question: string;
+    gameManager: string;
 };
 
 export type GameUsers = {

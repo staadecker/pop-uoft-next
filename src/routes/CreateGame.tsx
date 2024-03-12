@@ -10,7 +10,7 @@ import { createGame } from "../firebase/db_queries";
 import { Card } from "@mui/material";
 
 const CreateGame = () => {
-  const { db } = useFirebase();
+  const { db, currentUser } = useFirebase();
   const navigate = useNavigate();
   const [editor] = useLexicalComposerContext();
   const [submitting, setSubmitting] = useState(false);
@@ -27,6 +27,7 @@ const CreateGame = () => {
 
     const gameId = await createGame(
       db,
+      currentUser.uid,
       Number(formData.get("waitingTime")),
       Number(formData.get("roundDuration")),
       Number(formData.get("numRounds")),

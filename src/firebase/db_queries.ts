@@ -121,6 +121,7 @@ export const loadPriorWorks = async (
 
 export const createGame = async (
   db: Firestore,
+  uid: string,
   waitTime: number,
   roundDuration: number,
   numRounds: number,
@@ -134,6 +135,7 @@ export const createGame = async (
     roundDuration,
     numRounds,
     question,
+    gameManager: uid,
   });
   return gameId;
 };

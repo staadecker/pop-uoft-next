@@ -1,5 +1,12 @@
 import { FirebaseApp, initializeApp } from "firebase/app";
-import { Auth, User, getAuth, signInAnonymously } from "firebase/auth";
+import {
+  Auth,
+  User,
+  browserLocalPersistence,
+  getAuth,
+  initializeAuth,
+  signInAnonymously,
+} from "firebase/auth";
 import { Firestore, getFirestore } from "firebase/firestore";
 import { createContext, useContext, useEffect, useState } from "react";
 import Loading from "../components/Loading";
@@ -25,7 +32,7 @@ export const FirebaseProvider = (props: { children: React.ReactNode }) => {
     messagingSenderId: "774018965451",
     appId: "1:774018965451:web:19c826207d24e9d0b8204e",
   });
-  const auth = getAuth(app);
+  const auth = initializeAuth(app, { persistence: browserLocalPersistence });
   const db = getFirestore(app);
 
   useEffect(() => {

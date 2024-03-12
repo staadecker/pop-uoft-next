@@ -24,7 +24,8 @@ export type PossibleState =
   | "loading_work"
   | "in_progress"
   | "saving_work"
-  | "finished";
+  | "finished"
+  | "permission_denied";
 
 export const useGameStateMachine = (gameId: string, isPlayer: boolean) => {
   const { db, currentUser } = useFirebase();
@@ -35,10 +36,16 @@ export const useGameStateMachine = (gameId: string, isPlayer: boolean) => {
     { on?: Record<any, PossibleState>; effect?: Function }
   > = {
     loading_game: {
-      on: { GAME_FOUND: "loaded", game_not_found: "game_not_found" },
+      on: {
+        GAME_FOUND: "loaded",
+        game_not_found: "game_not_found",
+        permission_denied: "permission_denied",
+      },
       effect({ send, context, setContext }: EffectArgs) {
         getGameMetadata(context, (meta) => {
           if (meta === null) send("game_not_found");
+          else if (!isPlayer && meta.gameManager !== currentUser.uid)
+            send("permission_denied");
           else
             setContext((context) => ({ ...context, meta })).send("GAME_FOUND");
         });
@@ -52,6 +59,7 @@ export const useGameStateMachine = (gameId: string, isPlayer: boolean) => {
         });
       },
     },
+    permission_denied: {},
     game_not_found: {},
     loaded: {
       on: {
