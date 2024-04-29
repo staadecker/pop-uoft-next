@@ -26,3 +26,7 @@ Your app is ready to be deployed!
 ## Deployment
 
 Learn more about deploying your application with the [documentations](https://vitejs.dev/guide/static-deploy.html)
+
+## License
+
+All copyright of animal icons (under `assets/icons`) go to Google and [Jefferson Cheng](https://jeffersoncheng.com/Anonymous-Animals).
