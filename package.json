@@ -18,7 +18,7 @@
     "@cassiozen/usestatemachine": "^1.0.1",
     "@emotion/react": "^11.11.3",
     "@emotion/styled": "^11.11.0",
-    "@excalidraw/excalidraw": "^0.17.3",
+    "@excalidraw/excalidraw": "^0.17.6",
     "@lexical/clipboard": "^0.13.1",
     "@lexical/code": "^0.13.1",
     "@lexical/file": "^0.13.1",
@@ -36,7 +36,7 @@
     "@mui/lab": "^5.0.0-alpha.166",
     "@mui/material": "^5.15.11",
     "firebase": "^10.8.0",
-    "katex": "^0.16.9",
+    "katex": "^0.16.10",
     "lexical": "^0.13.1",
     "lodash-es": "^4.17.21",
     "prettier": "^2.3.2",
@@ -65,7 +65,7 @@
     "process": "^0.11.10",
     "tailwindcss": "^3.4.1",
     "typescript": "^5.2.2",
-    "vite": "^5.1.4"
+    "vite": "^5.1.7"
   },
   "engines": {
     "npm": "please-use-yarn"
